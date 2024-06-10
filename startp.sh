@@ -34,10 +34,15 @@ create_command() {
 		case $choice in
 		1)
 			echo "C template selected"
-			cd $path
-			cp -r ./startp/templates/pureC/* .
-			git init
-			git add README.md
+			if [-d "$path"]; then
+				cd "$path" || {echo "failed to change dir to $path"; exit 1;}
+				cp -r ~/startp/templates/pureC/* .
+				git init
+				git add README.md
+			else
+				echo "Destination path $path does not exist"
+				exit 1
+			fi 
 			;;
 		2)
 			echo "C++ template selected"

@@ -23,7 +23,6 @@ create_command() {
 	else
 		echo "Directory does not exist"
 		mkdir -p $path
-		cd $path
 		echo "select template"
 		echo "1 C"
 		echo "2 C++"
@@ -35,37 +34,43 @@ create_command() {
 		case $choice in
 		1)
 			echo "C template selected"
-			cp -r ~/startp/templates/c/* .
+			cd $path
+			cp -r ./startp/templates/pureC/* .
 			git init
 			git add README.md
 			;;
 		2)
 			echo "C++ template selected"
-			cp -r ~/startp/templates/cpp/* .
+			cd $path
+			cp -r ./startp/templates/cpp/* .
 			git init
 			git add README.md
 			;;
 		3)
 			echo "C + make template selected"
-			cp -r ~/startp/templates/c_make/* .
+			cd $path
+			cp -r ./startp/templates/c_make/* .
 			git init
 			git add README.md
 			;;
 		4)
 			echo "C++ + make template selected"
-			cp -r ~/startp/templates/cpp_make/* .
+			cd $path
+			cp -r ./startp/templates/cpp_make/* .
 			git init
 			git add README.md
 			;;
 		5)
 			echo "C + cmake template selected"
-			cp -r ~/startp/templates/c_cmake/* .
+			cd $path
+			cp -r ./startp/templates/c_cmake/* .
 			git init
 			git add README.md
 			;;
 		6)
 			echo "C++ + cmake template selected"
-			cp -r ~/startp/templates/cpp_cmake/* .
+			cd $path
+			cp -r ./startp/templates/cpp_cmake/* .
 			git init
 			git add README.md
 			;;

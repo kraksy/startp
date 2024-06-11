@@ -1,10 +1,98 @@
 #! /usr/bin/bash
 
 version=0.0.1
-
 path=$2
-
 help=README.md
+
+createReadme() {
+	cd $path
+	touch README.md
+	echo "Creating README.md"
+	echo "# $path" >README.md
+	echo "This is a new project" >>README.md
+}
+
+createMakeFile() {
+	cd $path
+	touch Makefile
+	echo "Creating Makefile"
+	echo "CC=gcc" >Makefile
+	echo "CFLAGS=-I." >>Makefile
+	echo "DEPS = hellomake.h" >>Makefile
+	echo "OBJ = hellomake.o hellofunc.o" >>Makefile
+	echo "%.o: %.c $(DEPS)" >>Makefile
+	echo "	$(CC) -c -o $@ $< $(CFLAGS)" >>Makefile
+	echo "hellomake: $(OBJ)" >>Makefile
+	echo "	$(CC) -o $@ $^ $(CFLAGS)" >>Makefile
+	echo ".PHONY: clean" >>Makefile
+	echo "clean:" >>Makefile
+	echo "	rm -f *.o hellomake" >>Makefile
+}
+
+createCMakeLists() {
+	cd $path
+	touch CMakeLists.txt
+	echo "Creating CMakeLists.txt"
+	echo "cmake_minimum_required(VERSION 3.10)" >CMakeLists.txt
+	echo "project(hellomake)" >>CMakeLists.txt
+	echo "add_executable(hellomake hellomake.c hellofunc.c)" >>CMakeLists.txt
+}
+
+createGitIgnore() {
+	cd $path
+	touch .gitignore
+	echo "Creating .gitignore"
+	echo "build" >.gitignore
+	echo "hellomake" >>.gitignore
+	echo "*.o" >>.gitignore
+}
+
+createTemplates() {
+	cd ~/.config/
+	mkdir templates
+	cd templates
+
+	mkdir C
+	mkdir C++
+	mkdir CplusMake
+	mkdir C++plusMake
+	mkdir CplusCmake
+	mkdir C++plusCmake
+}
+
+checkGit() {
+	if [ -d .git ]; then
+		echo "Git repository exists"
+		return 0
+	else
+		echo "Git repository does not exist"
+		return 1
+	fi
+}
+
+showDir() {
+	echo "Current directory: $(pwd)"
+}
+
+checkDir() {
+	if [ -d "$path" ]; then
+		echo "Directory exists"
+		return 0
+	else
+		echo "Directory does not exist"
+		return 1
+	fi
+}
+
+checkTemplate() {
+	if [ -d ~code/cpp/startp/templates/pureC ]; then
+		echo "Template exists"
+		return 0
+	else
+		echo "Template does not exist"
+		return 1
+	fi
+}
 
 help() {
 	while IFS= read -r line; do
@@ -14,6 +102,12 @@ help() {
 
 version() {
 	echo $version
+}
+
+config() {
+	cd ~/.config && mkdir startp
+	cd startp
+	mkdir templates
 }
 
 create_command() {
@@ -34,15 +128,23 @@ create_command() {
 		case $choice in
 		1)
 			echo "C template selected"
-			if [-d "$path"]; then
-				cd "$path" || {echo "failed to change dir to $path"; exit 1;}
-				cp -r ~/startp/templates/pureC/* .
-				git init
-				git add README.md
+			local pathValid=$(checkDir)
+			local templateValid=
+			if [ pathValid == 1 ]; then
+				cd "$path"
+				if [ -d ~code/cpp/startp/templates/pureC ]; then
+					cp -r ~code/cpp/startp/templates/pureC/* $path
+					echo "template pasted"
+					git init
+					git add README.md
+				else
+					echo "template not found"
+					exit 1
+				fi
 			else
 				echo "Destination path $path does not exist"
 				exit 1
-			fi 
+			fi
 			;;
 		2)
 			echo "C++ template selected"

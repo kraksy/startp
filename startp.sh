@@ -1,6 +1,6 @@
 #! /usr/bin/bash
 
-version=0.0.1
+version=0.0.2
 path=$2
 help=README.md
 
@@ -51,13 +51,65 @@ createTemplates() {
 	cd ~/.config/
 	mkdir templates
 	cd templates
-
-	mkdir C
-	mkdir C++
-	mkdir CplusMake
-	mkdir C++plusMake
-	mkdir CplusCmake
-	mkdir C++plusCmake
+  
+  if [checkDir C == 1];then
+    mkdir C
+    cd C
+    mkdir src
+    cd src && touch main.c 
+    cd ..
+    createReadme
+    createGitIgnore
+  fi
+  elif [checkDir C++ == 1]; then
+    mkdir C++
+    cd C++
+    mkdir src
+    cd src && touch main.cpp
+    cd ..
+    createReadme
+    createGitIgnore
+  fi
+  elif [ checkDir CplusMake == 1]; then
+    mkdir CplusMake
+    cd CplusMake
+    mkdir src
+    cd src && touch main.c 
+    cd ..
+    createReadme
+    createMakeFile
+    createGitIgnore
+  fi
+  elif [ checkDir C++plusMake == 1]; then
+    mkdir C++plusMake
+    cd C++plusMake
+    mkdir src
+    cd src && touch main.cpp 
+    cd ..
+    createReadme
+    createMakeFile
+    createGitIgnore
+  fi
+  elif [ checkDir CplusCmake == 1]; then
+    mkdir CplusCmake
+    cd CplusCmake
+    mkdir src
+    cd src && touch main.c 
+    cd ..
+    createReadme
+    createCMakeLists
+    createGitIgnore
+  fi
+  elif [ checkDir C++plusCmake == 1]; then
+    mkdir C++plusCmake
+    cd C++plusCmake
+    mkdir src
+    cd src && touch main.cpp 
+    cd ..
+    createReadme
+    createCMakeLists
+    createGitIgnore
+	fi
 }
 
 checkGit() {
@@ -75,7 +127,7 @@ showDir() {
 }
 
 checkDir() {
-	if [ -d "$path" ]; then
+	if [ -d "$1" ]; then
 		echo "Directory exists"
 		return 0
 	else
@@ -129,20 +181,19 @@ create_command() {
 		1)
 			echo "C template selected"
 			local pathValid=$(checkDir)
-			local templateValid=
-			if [ pathValid == 1 ]; then
+			local templateValid=$(checkTemplate)
+
+			if [ pathValid == 1 && templateValid == 1]; then
 				cd "$path"
-				if [ -d ~code/cpp/startp/templates/pureC ]; then
-					cp -r ~code/cpp/startp/templates/pureC/* $path
-					echo "template pasted"
-					git init
-					git add README.md
-				else
-					echo "template not found"
-					exit 1
-				fi
+
+				echo "template pasted"
+				git init
+				git add README.md
+				showDir
+				echo "template pasted"
 			else
-				echo "Destination path $path does not exist"
+				echo "path test = $pathValid"
+				echo "template test = $templateValid"
 				exit 1
 			fi
 			;;
@@ -208,3 +259,5 @@ fi
 if [ "$1" == "help" ]; then
 	help
 fi
+
+echo "startp | for starting C / Cpp projects | version : $version"

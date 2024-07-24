@@ -4,7 +4,7 @@ version=0.0.2
 path=$2
 help=README.md
 
-createReadme() {
+function createReadme() {
 	cd $path
 	touch README.md
 	echo "Creating README.md"
@@ -12,7 +12,7 @@ createReadme() {
 	echo "This is a new project" >>README.md
 }
 
-createMakeFile() {
+function createMakeFile() {
 	cd $path
 	touch Makefile
 	echo "Creating Makefile"
@@ -29,7 +29,7 @@ createMakeFile() {
 	echo "	rm -f *.o hellomake" >>Makefile
 }
 
-createCMakeLists() {
+function createCMakeLists() {
 	cd $path
 	touch CMakeLists.txt
 	echo "Creating CMakeLists.txt"
@@ -38,7 +38,7 @@ createCMakeLists() {
 	echo "add_executable(hellomake hellomake.c hellofunc.c)" >>CMakeLists.txt
 }
 
-createGitIgnore() {
+function createGitIgnore() {
 	cd $path
 	touch .gitignore
 	echo "Creating .gitignore"
@@ -47,69 +47,90 @@ createGitIgnore() {
 	echo "*.o" >>.gitignore
 }
 
-createTemplates() {
-	cd ~/.config/
-	mkdir templates
-	cd templates
-  
-  if [checkDir C == 1];then
-    mkdir C
-    cd C
-    mkdir src
-    cd src && touch main.c 
-    cd ..
-    createReadme
-    createGitIgnore
+function createTemplates()
+{
+  cd ~/.config/
+  mkdir templates
+  cd templates
+  echo "checking templates"
+  echo "checking C"
+  checkedC=checkDir C
+  if [[ checkedC == 0 ]]; then
+    echo "C dir exist"
   fi
-  elif [checkDir C++ == 1]; then
-    mkdir C++
-    cd C++
-    mkdir src
-    cd src && touch main.cpp
-    cd ..
-    createReadme
-    createGitIgnore
+  checkedCpp=checkDir C++
+  if [[ checkedCpp == 0 ]]; then
+    echo "C++ dir exist"
   fi
-  elif [ checkDir CplusMake == 1]; then
-    mkdir CplusMake
-    cd CplusMake
-    mkdir src
-    cd src && touch main.c 
-    cd ..
-    createReadme
-    createMakeFile
-    createGitIgnore
+  checkedCplusMake=checkDir CplusMake
+  if [[ checkedCplusMake == 0 ]]; then
+    echo "C plus make dir exist"
   fi
-  elif [ checkDir C++plusMake == 1]; then
-    mkdir C++plusMake
-    cd C++plusMake
-    mkdir src
-    cd src && touch main.cpp 
-    cd ..
-    createReadme
-    createMakeFile
-    createGitIgnore
+  checkedCppplusMake=checkDir CppplusMake
+  if [[ checkedCppplusMake == 0 ]]; then
+    echo "C++ plug make dir exist"
+  checkedCplusCmake=checkDir CplusCmake
+  if [[ checkedCplusCmake == 0 ]]; then
+    echo "C plus Cmake dir exist"
   fi
-  elif [ checkDir CplusCmake == 1]; then
-    mkdir CplusCmake
-    cd CplusCmake
-    mkdir src
-    cd src && touch main.c 
-    cd ..
-    createReadme
-    createCMakeLists
-    createGitIgnore
+  checkedCppplusCmake=checkdir CppplusCmake
+  if [[checkedCppplusCmake == 0 ]]; then
+    echo "C++ plus Cmake dir exist"
   fi
-  elif [ checkDir C++plusCmake == 1]; then
-    mkdir C++plusCmake
-    cd C++plusCmake
-    mkdir src
-    cd src && touch main.cpp 
-    cd ..
-    createReadme
-    createCMakeLists
-    createGitIgnore
-	fi
+  if [[ checkedC == 1 ]]; then
+      mkdir C
+      cd C
+      mkdir src
+      cd src && touch main.c 
+      cd ..
+      createReadme
+      createGitIgnore
+  elif [[ checkedCpp == 1 ]]; then
+      mkdir C++
+      cd C++
+      mkdir src
+      cd src && touch main.cpp
+      cd ..
+      createReadme
+      createGitIgnore
+  elif [[ checkedCplusMake == 1 ]]; then
+      mkdir CplusMake
+      cd CplusMake
+      mkdir src
+      cd src && touch main.c 
+      cd ..
+      createReadme
+      createMakeFile
+      createGitIgnore
+  elif [[ checkedCppplusMake == 1 ]]; then
+      mkdir C++plusMake
+      cd C++plusMake
+      mkdir src
+      cd src && touch main.cpp 
+      cd ..
+      createReadme
+      createMakeFile
+      createGitIgnore
+  elif [[ checkedCplusCmake == 1 ]]; then
+      mkdir CplusCmake
+      cd CplusCmake
+      mkdir src
+      cd src && touch main.c 
+      cd ..
+      createReadme
+      createCMakeLists
+      createGitIgnore
+  elif [[ checkedCppplusCmake == 1 ]]; then
+      mkdir C++plusCmake
+      cd C++plusCmake
+      mkdir src
+      cd src && touch main.cpp 
+      cd ..
+      createReadme
+      createCMakeLists
+      createGitIgnore
+  fi
+  echo "finished templates"
 }
 
 checkGit() {
@@ -162,7 +183,8 @@ config() {
 	mkdir templates
 }
 
-create_command() {
+create_command()
+{
 	echo "create command"
 	if test -d $path; then
 		echo "Directory exists"
@@ -185,7 +207,6 @@ create_command() {
 
 			if [ pathValid == 1 && templateValid == 1]; then
 				cd "$path"
-
 				echo "template pasted"
 				git init
 				git add README.md
@@ -240,6 +261,27 @@ create_command() {
 	fi
 }
 
+if [[ "$1" == " " ]]; then
+  "nothing insereted , showing help"
+  help
+elif [[ "$1" == "create" ]]; then
+  "creating command "
+	create_command
+elif [[ "$1" == "template" ]]; then
+  echo "creating template"
+  createTemplates
+elif [[ "$1" == "version" ]]; then
+  echo "showing version"
+	version
+elif [[ "$1" == "help" ]]; then
+  "showing help"
+	help
+else
+  echo "nothing selected"
+fi
+
+echo "startp | for starting C / Cpp projects | version : $version"
+
 case "$OSTYPE" in
 darwin*) echo "OSX" ;;
 linux*) echo "LINUX" ;;
@@ -250,14 +292,3 @@ solaris*) echo "SOLARIS" ;;
 *) echo "unknown: $OSTYPE" ;;
 esac
 
-if [ "$1" == "create" ]; then
-	create_command
-fi
-if [ "$1" == "version" ]; then
-	version
-fi
-if [ "$1" == "help" ]; then
-	help
-fi
-
-echo "startp | for starting C / Cpp projects | version : $version"
